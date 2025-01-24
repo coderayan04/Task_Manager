@@ -18,6 +18,7 @@ NODE_ENV = "development"
 ```
 4. Run this project with command
 ```
+cd backend
 nodemon server.js
 or
 npm start
