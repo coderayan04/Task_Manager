@@ -96,9 +96,35 @@ const generateToken = (id) => {
   })
 }
 
+
+
+const pendingTask = asyncHandler(async(req,res) =>{
+  const {id} = req.user;
+  if(!id){
+    res.status(401)
+    throw new Error('User not found')
+  }
+  const pending = await Task.find({ user: id, taskCompleted: false });
+  res.status(200).json(pending);
+  
+})
+
+const completedTask = asyncHandler(async(req,res) =>{
+  const {id} = req.user;
+  if(!id){
+    res.status(401)
+    throw new Error('User not found')
+  }
+  const completedTask = await Task.find({ user: id, taskCompleted: true });
+  res.status(200).json(completedTask);
+  
+})
+
 module.exports = {
   getUser,
   registerUser,
   signIn,
   deleteUser,
+  pendingTask,
+  completedTask 
 }  

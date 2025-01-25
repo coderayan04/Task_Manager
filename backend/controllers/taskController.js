@@ -7,9 +7,25 @@ const getTasks = asyncHandler(async(req, res) => {
     res.status(400)
     throw new Error('User not found')
   }
-  const tasks = await Task.find({user: req.user.id})
+  const {priority} = req.body;
+  console.log(priority);
+  const {id} = req.user;
+  if(priority === 'low' ){
+    console.log('1')
+    console.log('User ID:', id);
+    const tasks = await Task.find({ user: id, priority: 'low' });
+    res.status(200).json(tasks);
+  }else if(priority === 'medium'){
+    const tasks = await Task.find({ user: id, priority: 'medium' });
+    res.status(200).json(tasks);
+  } else if(priority === 'high'){
+    const tasks = await Task.find({ user: id, priority: 'high' });
+    res.status(200).json(tasks);
+  }else{
+    const tasks = await Task.find({user: req.user.id})
+    res.status(200).json(tasks)
+  }
 
-  res.status(200).json(tasks)
 })
 
 // get specific task for specific user
@@ -83,6 +99,11 @@ const deleteTask = asyncHandler(async(req, res) => {
 
   res.status(200).json({id: task._id})
 })
+
+
+
+
+
 
 module.exports = {
   getTasks,
