@@ -4,6 +4,7 @@ const Task = require('../models/taskModel')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 
+
 // it will give user detail to user example profile page
 const getUser = asyncHandler(async(req, res) => {
  if (!req.user) {

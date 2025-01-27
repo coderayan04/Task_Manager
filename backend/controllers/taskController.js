@@ -1,29 +1,42 @@
 const asyncHandler = require('express-async-handler')
 const Task = require('../models/taskModel')
 
+
+//sort task low-medium-high  and high-low-medium
+
+
 // get all task of specific user
 const getTasks = asyncHandler(async(req, res) => {
   if (!req.user) {
     res.status(400)
     throw new Error('User not found')
   }
-  const {priority} = req.body;
-  console.log(priority);
-  const {id} = req.user;
-  if(priority === 'low' ){
-    console.log('1')
-    console.log('User ID:', id);
-    const tasks = await Task.find({ user: id, priority: 'low' });
-    res.status(200).json(tasks);
-  }else if(priority === 'medium'){
-    const tasks = await Task.find({ user: id, priority: 'medium' });
-    res.status(200).json(tasks);
-  } else if(priority === 'high'){
-    const tasks = await Task.find({ user: id, priority: 'high' });
-    res.status(200).json(tasks);
-  }else{
+  const {priority} = req.query;
+  if(!priority){
     const tasks = await Task.find({user: req.user.id})
-    res.status(200).json(tasks)
+    return res.status(200).json(tasks);
+  }
+  const {id} = req.user;
+  const lowTasks = await Task.find({ user: id, priority: 'low' });
+  const mediumTasks = await Task.find({ user: id, priority: 'medium' });
+  const highTasks = await Task.find({ user: id, priority: 'high' });
+
+
+  if(priority === 'low' ){
+    res.status(200).json(lowTasks);
+  }else if(priority === 'medium'){
+    res.status(200).json(mediumTasks);
+  } else if(priority === 'high'){
+    res.status(200).json(highTasks);
+  }else if(priority === 'low-medium-high'){
+    const sortedTask = [...lowTasks, ...mediumTasks, ...highTasks];
+    res.status(200).json(sortedTask);
+  }else if(priority === 'high-medium-low'){
+    const sortedTask = [...highTasks, ...mediumTasks, ...lowTasks];
+    res.status(200).json(sortedTask);
+  }
+  else{
+    res.status(400).json({message: "please enter priority is low, medium, high, low-medium-high or high-mediun-low or don't send any query "})
   }
 
 })
