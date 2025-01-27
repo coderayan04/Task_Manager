@@ -8,11 +8,10 @@ const bcrypt = require('bcryptjs')
 // it will give user detail to user example profile page
 const getUser = asyncHandler(async(req, res) => {
  if (!req.user) {
-    res.status(401)
-    throw new Error('User not found')
+    return res.status(401).json({message: "User not found"})
   }
 
-  res.status(200).json(req.user)
+  return res.status(200).json(req.user)
 })
 
 
@@ -21,15 +20,14 @@ const registerUser = asyncHandler(async(req, res) => {
   const {name, email, password} = req.body
 
   if (!name || !email || !password) {
-    res.status(400)
-    throw new Error('Please fill all required feilds')
+    return res.status(400).json({message: "Please fill all required fields"})
   }
 
   const userExists = await User.findOne({email})
 
   if (userExists) {
-    res.status(400)
-    throw new Error('User already exists')
+    return res.status(400).json({message: "User not found"})
+    
   }
 
   const salt = await bcrypt.genSalt(10) 
@@ -38,8 +36,7 @@ const registerUser = asyncHandler(async(req, res) => {
   const user = await User.create({name, email, password: hashedPassword})
 
   if (user) {
-    res.status(201)
-    res.json({
+    return res.status(201).json({
       _id: user.id,
       name: user.name,
       email: user.email,
@@ -48,8 +45,8 @@ const registerUser = asyncHandler(async(req, res) => {
       token: generateToken(user._id),
     })
   } else {
-    res.status(400)
-    throw new Erorr('Invalid user data')
+    return res.status(400).json({message: "Invalid user data"})
+    
   }
 })
 
@@ -58,13 +55,12 @@ const signIn = asyncHandler(async(req, res) => {
   const {email, password} = req.body
 
   if (!email || !password) {
-    res.status(400)
-    throw new Error('Please fill all required reilds')
+    return res.status(400).json({message: "Please fill all requied feilds"})
   }
 
   const user = await User.findOne({email})
   if (user && (await bcrypt.compare(password, user.password))) {
-    res.status(200).json({
+    return res.status(200).json({
       id: user.id,
       name: user.name,
       email: user.email,
@@ -73,22 +69,19 @@ const signIn = asyncHandler(async(req, res) => {
       token: generateToken(user.id)
     })
   } else {
-    res.status(401)
-    throw new Error('Invalid credentials')
+    return res.status(401).json({message: "Invalid credentials"})
   }
 })
 
 // user want to delete his account
 const deleteUser = asyncHandler(async(req, res) => {
   if (!req.user) {
-    res.status(400)
-    throw new Error('User not found')
+    return res.status(400).json({message: "User not found"})
   }
 
   await Task.deleteMany({user: req.user.id})
   await User.deleteOne(req.user)
-  res.status(200)
-  res.json(req.user.id)
+  return res.status(200).json(req.user.id)
 })
 
 const generateToken = (id) => {
@@ -102,22 +95,22 @@ const generateToken = (id) => {
 const pendingTask = asyncHandler(async(req,res) =>{
   const {id} = req.user;
   if(!id){
-    res.status(401)
-    throw new Error('User not found')
+    return res.status(401).json({message: "User not found"})
+    
   }
   const pending = await Task.find({ user: id, taskCompleted: false });
-  res.status(200).json(pending);
+  return res.status(200).json(pending);
   
 })
 
 const completedTask = asyncHandler(async(req,res) =>{
   const {id} = req.user;
   if(!id){
-    res.status(401)
-    throw new Error('User not found')
+    return res.status(401).json({message: "User not found"})
+    
   }
   const completedTask = await Task.find({ user: id, taskCompleted: true });
-  res.status(200).json(completedTask);
+  return res.status(200).json(completedTask);
   
 })
 
