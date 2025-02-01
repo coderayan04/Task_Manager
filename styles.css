@@ -5,10 +5,22 @@ body {
     padding: 0;
     background-color: #f4f4f4;
   }
+
+  .app-name h1{
+    display: flex;
+    justify-content: center;
+    color: #6D28D2;
+    
+  }
+  .app-name p{
+    display: flex;
+    justify-content: center;
+  }
   
   .container {
     max-width: 600px;
     margin: 20px auto;
+    margin-top: 5%;
     padding: 20px;
     background: #fff;
     border-radius: 10px;
@@ -37,6 +49,11 @@ body {
   
   button:hover {
     background-color: #0056b3;
+  }
+
+  /* add task */
+  .add-task{
+    padding:100px;
   }
   
   /* Tabs */
