@@ -131,3 +131,7 @@ document.getElementById('showLogin').addEventListener('click', () => {
     registerPage.classList.add('hidden');
     loginPage.classList.remove('hidden');
   });
+    
+
+// Initialize
+renderTasks();
